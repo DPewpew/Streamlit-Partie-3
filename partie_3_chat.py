@@ -46,8 +46,6 @@ authenticator = Authenticate(
 
 # 3) Login
 authenticator.login()
-   
-
 
 if st.session_state["authentication_status"]:
     user_name = st.session_state["name"]
@@ -113,5 +111,6 @@ elif st.session_state["authentication_status"] is False:
     st.error("L'username ou le password est/sont incorrect")
 elif st.session_state["authentication_status"] is None:
     st.warning('Les champs username et mot de passe doivent être remplie')
-    st.info("username = utilisateur")
-    st.info("password = utilisateurMDP")
+    
+    if st.button("Voir les identifiants de connexion")==True:
+        st.info("username = utilisateur\n\n password = utilisateurMDP")
