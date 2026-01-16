@@ -4,42 +4,49 @@ from streamlit_option_menu import option_menu
 from streamlit_authenticator import Authenticate
 import pandas as pd
 
+url_log = "https://raw.githubusercontent.com/DPewpew/Streamlit-Partie-3/refs/heads/main/log.csv"
 
-from streamlit_authenticator import Authenticate
+@st.cache_data
+def load_credentials(url: str) -> dict:
+    df = pd.read_csv(url)
 
-url = ""
+    required = ["name", "password", "email", "failed_login_attempts", "logged_in", "role"]
+    missing = [c for c in required if c not in df.columns]
+    if missing:
+        raise ValueError(f"Colonnes manquantes: {missing} | Colonnes trouvées: {list(df.columns)}")
 
+    # Normaliser types
+    df["failed_login_attempts"] = pd.to_numeric(df["failed_login_attempts"], errors="coerce").fillna(0).astype(int)
+    df["logged_in"] = df["logged_in"].astype(str).str.lower().isin(["true", "1", "yes", "y", "vrai"])
 
-# Nos données utilisateurs doivent respecter ce format
-lesDonneesDesComptes = {
-    'usernames': {
-        'utilisateur': {
-            'name': 'utilisateur',
-            'password': 'utilisateurMDP',
-            'email': 'utilisateur@gmail.com',
-            'failed_login_attemps': 0,  # Sera géré automatiquement
-            'logged_in': False,          # Sera géré automatiquement
-            'role': 'utilisateur'
-        },
-        'root': {
-            'name': 'root',
-            'password': 'rootMDP',
-            'email': 'admin@gmail.com',
-            'failed_login_attemps': 0,  # Sera géré automatiquement
-            'logged_in': False,          # Sera géré automatiquement
-            'role': 'administrateur'
+    usernames = {}
+    for _, row in df.iterrows():
+        username = str(row["name"]).strip()  
+        usernames[username] = {
+            "name": str(row["name"]).strip(),
+            "password": str(row["password"]),
+            "email": str(row["email"]).strip(),
+            "failed_login_attempts": int(row["failed_login_attempts"]),  
+            "logged_in": bool(row["logged_in"]),
+            "role": str(row["role"]).strip(),
         }
-    }
-}
 
+    return {"usernames": usernames}
+
+# 1) Charger les comptes depuis GitHub
+lesDonneesDesComptes = load_credentials(url_log)
+
+# 2) Créer l’authenticator
 authenticator = Authenticate(
-    lesDonneesDesComptes,  # Les données des comptes
-    "cookie name",         # Le nom du cookie, un str quelconque
-    "cookie key",          # La clé du cookie, un str quelconque
-    30,                    # Le nombre de jours avant que le cookie expire
+    lesDonneesDesComptes,
+    "cookie_name",
+    "cookie_key",
+    30
 )
 
+# 3) Login
 authenticator.login()
+
 
     
 def log():
