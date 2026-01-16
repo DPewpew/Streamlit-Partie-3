@@ -113,5 +113,5 @@ elif st.session_state["authentication_status"] is False:
     st.error("L'username ou le password est/sont incorrect")
 elif st.session_state["authentication_status"] is None:
     st.warning('Les champs username et mot de passe doivent être remplie')
-    st.write("username = utilisateur")
-    st.write("password = utilisateurMDP")
+    st.info("username = utilisateur")
+    st.info("password = utilisateurMDP")
