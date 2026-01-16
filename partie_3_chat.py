@@ -46,12 +46,7 @@ authenticator = Authenticate(
 
 # 3) Login
 authenticator.login()
-st.write("username = utilisateur")
-st.write("password = utilisateurMDP")
-
-    
-def log():
-      st.title("Bienvenu sur le contenu réservé aux utilisateurs connectés")
+   
 
 
 if st.session_state["authentication_status"]:
@@ -118,3 +113,5 @@ elif st.session_state["authentication_status"] is False:
     st.error("L'username ou le password est/sont incorrect")
 elif st.session_state["authentication_status"] is None:
     st.warning('Les champs username et mot de passe doivent être remplie')
+    st.write("username = utilisateur")
+    st.write("password = utilisateurMDP")
