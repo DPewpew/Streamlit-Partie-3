@@ -46,7 +46,8 @@ authenticator = Authenticate(
 
 # 3) Login
 authenticator.login()
-
+st.write("username = utilisateur")
+st.write("password = utilisateurMDP")
 
     
 def log():
